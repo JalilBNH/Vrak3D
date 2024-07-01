@@ -115,8 +115,23 @@ def newPointPosition(start_point, slope, dist):
     return (x2, y2)
 
 
+def startPointPosition(polygons):
+    """Given a list of polygons return the mean position of the starting point
+
+    Args:
+        polygons (list): list of polygons 
+    """
+    
+    for 
+
 def meanPolygon(polygons):
     new_polygon = []
+    means_slope = computeMeanSlope(polygons)
+    means_distance = computeMeanDistance(polygons)
+    
+    print(means_slope)
+    print(means_distance)
+    
     
     for polygon in polygons:
         pass
