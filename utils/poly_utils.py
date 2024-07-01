@@ -121,8 +121,13 @@ def startPointPosition(polygons):
     Args:
         polygons (list): list of polygons 
     """
+    mean_x = 0
+    mean_y = 0 
     
-    for 
+    for poly in polygons:
+        pass
+    
+    return (mean_x, mean_y)
 
 def meanPolygon(polygons):
     new_polygon = []
