@@ -98,7 +98,7 @@ def computeMeanDistance(polygons):
     for i in range(num_polygons):
         for j in range(num_verticies - 1):
             means[j] += euclidDistance(polygons[i][j], polygons[i][j+1])
-    
+            
     return means/num_polygons 
 
 
@@ -121,22 +121,24 @@ def startPointPosition(polygons):
     Args:
         polygons (list): list of polygons 
     """
+    num_polygons = len(polygons)
     mean_x = 0
     mean_y = 0 
     
     for poly in polygons:
-        pass
+        mean_x += poly[0][0]
+        mean_y += poly[0][1]
     
-    return (mean_x, mean_y)
+    return (mean_x/num_polygons, mean_y/num_polygons)
 
 def meanPolygon(polygons):
-    new_polygon = []
+    new_polygon = [startPointPosition(polygons)]
     means_slope = computeMeanSlope(polygons)
-    means_distance = computeMeanDistance(polygons)
+    means_distances = computeMeanDistance(polygons)
     
-    print(means_slope)
-    print(means_distance)
+    num_segments = len(means_distances)
     
+    for i in range(num_segments):
+        new_polygon.append(newPointPosition(new_polygon[i], means_slope[i], means_distances[i]))
     
-    for polygon in polygons:
-        pass
+    return [new_polygon]
