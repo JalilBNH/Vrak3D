@@ -25,7 +25,22 @@ def visualizePolygons(polygons):
     ax.set_xlim(0, 10)
     ax.set_ylim(0, 10)
     plt.show()
+
+
+def visualizePoints(polygons):
+    """Given a list of polygons, plot the points
+
+    Args:
+        polygons (list): list of polygons 
+    """
+    colors = plt.cm.rainbow(np.linspace(0, 1, len(polygons)))
     
+    for poly, color in zip(polygons, colors):
+        for coords in poly:
+            plt.scatter(coords[0], coords[1], color=color)   
+            
+    plt.show() 
+
 
 def computeSlope(v1, v2):
     """Given two points, return the slope. 
@@ -132,6 +147,14 @@ def startPointPosition(polygons):
     return (mean_x/num_polygons, mean_y/num_polygons)
 
 def meanPolygon(polygons):
+    """Given a list of polygons return a new polygon that is the mean of all the polygons given.
+
+    Args:
+        polygons (list): list of polygons
+
+    Returns:
+        list: coordinates of the new polygon 
+    """
     new_polygon = [startPointPosition(polygons)]
     means_slope = computeMeanSlope(polygons)
     means_distances = computeMeanDistance(polygons)
