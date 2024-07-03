@@ -1,9 +1,9 @@
-from utils import *
+from utils import visualize_predictions
 from matplotlib import pyplot as plt 
 import numpy as np
 
 def main():
-    polygons = [[(0,0), (2,3), (4,0)], [(6,0), (8,3), (10,0)]]
+    """ polygons = [[(0,0), (2,3), (4,0)], [(6,0), (8,3), (10,0)]]
 
     thresold = 1
     print('==============================')
@@ -23,7 +23,11 @@ def main():
         break
     #visualizePoints(polygons)
     print(polygons)
-    print(new_poly) # Because in this case, i consider 1 polygon as 3
+    print(new_poly) # Because in this case, i consider 1 polygon as 3 """
+    
+    
+    visualize_predictions("C:/Users/Jalil/Downloads/IMG_1228.jpg")
+    
         
 if __name__ == '__main__':
     main()
