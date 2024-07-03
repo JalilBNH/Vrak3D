@@ -4,12 +4,13 @@ Segment stone bloc on 3D model of archeological site
 
 ### Todo
 
-- [ ] Choose a data augmentation pipeline
+- [ ] Correct the polygon filler 
 
 
 ### In Progress
 
 - [ ] Find a method to mean a 3D mask 
+- [ ] Choose a data augmentation pipeline
 
 ### Done
 
