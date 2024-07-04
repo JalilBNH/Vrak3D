@@ -7,8 +7,8 @@ def main():
     
     polygons_filled = fill_polygons(polygons)
     
-    visualizePoints(polygons)
-    visualizePoints(polygons_filled)    
+    visualize_points(polygons)
+    visualize_polygons(polygons_filled)    
     
     
         

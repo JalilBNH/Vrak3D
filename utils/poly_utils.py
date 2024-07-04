@@ -7,7 +7,7 @@ from matplotlib.patches import Polygon
 
 # Every polygon must have the same size 
 
-def visualizePolygons(polygons):
+def visualize_polygons(polygons):
     """Given a list of polygons, plot all of them.
 
     Args:
@@ -27,7 +27,7 @@ def visualizePolygons(polygons):
     plt.show()
 
 
-def visualizePoints(polygons):
+def visualize_points(polygons):
     """Given a list of polygons, plot the points
 
     Args:
@@ -42,7 +42,7 @@ def visualizePoints(polygons):
     plt.show() 
 
 
-def computeSlope(v1, v2):
+def compute_slope(v1, v2):
     """Given two points, return the slope. 
 
     Args:
@@ -58,7 +58,7 @@ def computeSlope(v1, v2):
     
     return (y2 - y1)/(x2 - x1)
 
-def computeMeanSlope(polygons):
+def compute_mean_slope(polygons):
     """Given a list of polygons of the same size, return the mean slope for each segment.
 
     Args:
@@ -75,12 +75,12 @@ def computeMeanSlope(polygons):
     
     for i in range(num_polygons):
         for j in range(num_verticies - 1):
-            slopes[j] += computeSlope(polygons[i][j], polygons[i][j+1])
+            slopes[j] += compute_slope(polygons[i][j], polygons[i][j+1])
     
     return slopes/num_polygons
 
 
-def euclidDistance(v1, v2):
+def euclidean_distance(v1, v2):
     """Given two points, return the euclidean distance between them.
 
     Args:
@@ -96,7 +96,7 @@ def euclidDistance(v1, v2):
     return sqrt((x1 - x2)**2 + (y1 - y2)**2)
 
 
-def computeMeanDistance(polygons):
+def compute_mean_distance(polygons):
     """Given a list of polygons of the same size, return the mean euclidean distance for each segment.
 
     Args:
@@ -112,12 +112,12 @@ def computeMeanDistance(polygons):
     
     for i in range(num_polygons):
         for j in range(num_verticies - 1):
-            means[j] += euclidDistance(polygons[i][j], polygons[i][j+1])
+            means[j] += euclidean_distance(polygons[i][j], polygons[i][j+1])
             
     return means/num_polygons 
 
 
-def newPointPosition(start_point, slope, dist):
+def new_point_position(start_point, slope, dist):
     x1, y1 = start_point
     theta = atan(slope)
     
@@ -130,7 +130,7 @@ def newPointPosition(start_point, slope, dist):
     return (x2, y2)
 
 
-def startPointPosition(polygons):
+def find_start_point_pos(polygons):
     """Given a list of polygons return the mean position of the starting point
 
     Args:
@@ -146,7 +146,7 @@ def startPointPosition(polygons):
     
     return (mean_x/num_polygons, mean_y/num_polygons)
 
-def meanPolygon(polygons):
+def mean_polygons(polygons):
     """Given a list of polygons return a new polygon that is the mean of all the polygons given.
 
     Args:
@@ -155,14 +155,14 @@ def meanPolygon(polygons):
     Returns:
         list: coordinates of the new polygon 
     """
-    new_polygon = [startPointPosition(polygons)]
-    means_slope = computeMeanSlope(polygons)
-    means_distances = computeMeanDistance(polygons)
+    new_polygon = [find_start_point_pos(polygons)]
+    means_slope = compute_mean_slope(polygons)
+    means_distances = compute_mean_distance(polygons)
     
     num_segments = len(means_distances)
     
     for i in range(num_segments):
-        new_polygon.append(newPointPosition(new_polygon[i], means_slope[i], means_distances[i]))
+        new_polygon.append(new_point_position(new_polygon[i], means_slope[i], means_distances[i]))
     
     return [new_polygon]
 
@@ -173,7 +173,7 @@ def fill_polygons(polygons, thresold=1):
         new_poly = []
         for i in range(len(poly)):
             #print(f'i : {i}, i + 1 : {(i+1)%len(poly)}')
-            dist = euclidDistance(poly[i], poly[(i+1)%len(poly)])
+            dist = euclidean_distance(poly[i], poly[(i+1)%len(poly)])
             
             if dist > thresold:
                 num_points = int(dist // thresold)
