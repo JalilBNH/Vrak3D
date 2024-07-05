@@ -37,7 +37,7 @@ def visualize_points(polygons):
     
     for poly, color in zip(polygons, colors):
         for coords in poly:
-            plt.scatter(coords[0], coords[1], color=color)   
+            plt.scatter(coords[0], coords[1], color=color, s=2)   
             
     plt.show() 
 
