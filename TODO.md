@@ -4,7 +4,7 @@ Segment stone bloc on 3D model of archeological site
 
 ### Todo
 
--  [ ] Use the polygons outline filler to real mask
+-  [ ] Fix the augmentation pipeline problem
 
 
 ### In Progress
@@ -12,6 +12,7 @@ Segment stone bloc on 3D model of archeological site
 -  [ ] Find a method to mean a 3D mask 
 
 ### Done
+-  [x] Use the polygons outline filler to real mask
 -  [x] Correct the polygon filler 
 -  [x] Choose a data augmentation pipeline
 -  [x] Handle metashape (software and library)
