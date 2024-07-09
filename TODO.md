@@ -8,8 +8,9 @@ Segment stone bloc on 3D model of archeological site
 
 
 ### In Progress
-
+ 
 -  [ ] Find a method to mean a 3D mask 
+    -  [ ] Get the offset between each mask and compute the IoU 
 
 ### Done
 -  [x] Use the polygons outline filler to real mask
