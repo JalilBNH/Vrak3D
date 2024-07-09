@@ -1,4 +1,5 @@
 from utils import visualize_points, fill_polygons
+from class_metashape import Project
 from pycocotools.coco import COCO
 import os
 from PIL import Image
@@ -7,7 +8,7 @@ from matplotlib import pyplot as plt
 
 def main():
 
-    annotation_path = 'training/datasets/0COMPLET/complet/annotations/instances_default.json'
+    """ annotation_path = 'training/datasets/0COMPLET/complet/annotations/instances_default.json'
     images_path = 'training/datasets/0COMPLET/complet/images'
     
     coco = COCO(annotation_path)
@@ -33,12 +34,16 @@ def main():
     
     visualize_points(keypoints)
     filled_keypoints = fill_polygons(keypoints, thresold=30)
-    visualize_points(filled_keypoints)
+
+    visualize_points(filled_keypoints) """    
     
-    
+
     """ plt.imshow(plt.imread(os.path.join(images_path, image['file_name']))), plt.axis('off'), plt.title(f'ind : {ind}')
     plt.show() """
-        
+    
+    project = Project(r"C:\Users\Jalil\Documents\Stage_LIS\Metashape\2024-06-18\partial_and_comp_models.psx")
+    project.get_angle_cameras(1,2)
+    
 if __name__ == '__main__':
     main()
     
