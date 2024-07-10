@@ -186,3 +186,8 @@ def fill_polygons(polygons, thresold=1):
         new_polys.append(new_poly)
         
     return new_polys
+
+
+def find_corner(polygon):
+    
+    corner = []
