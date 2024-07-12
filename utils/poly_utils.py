@@ -1,7 +1,7 @@
 
 from math import sqrt, atan, cos, sin
 import numpy as np
-
+from copy import deepcopy
 from matplotlib import pyplot as plt
 from matplotlib.patches import Polygon
 
@@ -167,7 +167,15 @@ def mean_polygons(polygons):
     return [new_polygon]
 
 def fill_polygons(polygons, thresold=1):
-    
+    """Given a list of polygons and a thresold, return the polygons filled with points on the outline
+
+    Args:
+        polygons (list): list of polygons
+        thresold (int, optional): thresold for the minimal distance between 2 points. Defaults to 1.
+
+    Returns:
+        : polygons filled with points
+    """
     new_polys = []
     for poly in polygons:
         new_poly = []
@@ -188,6 +196,28 @@ def fill_polygons(polygons, thresold=1):
     return new_polys
 
 
-def find_corner(polygon):
+def find_corner(polygons):
+    """Given a list of polygons, return the for points that frames the polygon
+
+    Args:
+        polygons (list): list of polygons
+
+    Returns:
+        list: list of the coordinates that frames the polygons
+    """
     
-    corner = []
+    corners = deepcopy(polygons)
+    for poly in polygons:
+        #print(f"poly : {poly}")
+        x_array = np.zeros(len(poly), dtype='float')
+        y_array = np.zeros(len(poly))
+        for i, coord in enumerate(poly):
+            x_array[i] = coord[0]
+            y_array[i] = coord[1]
+        x_max = np.max(x_array)
+        x_min = np.min(x_array)
+        y_max = np.max(y_array)
+        y_min = np.min(y_array)
+        corners.append([(x_max, y_max), (x_max, y_min), (x_min, y_max), (x_min, y_min)]) 
+    
+    return corners
