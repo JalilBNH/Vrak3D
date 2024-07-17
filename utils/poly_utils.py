@@ -4,14 +4,14 @@ import numpy as np
 from copy import deepcopy
 from matplotlib import pyplot as plt
 from matplotlib.patches import Polygon
-
+import shapely
 # Every polygon must have the same size 
 
 def visualize_polygons(polygons):
     """Given a list of polygons, plot all of them.
 
     Args:
-        polygons (list): list of polygons
+        polygons (list[list]): list of polygons
     """
     
     fig, ax = plt.subplots()
@@ -31,7 +31,7 @@ def visualize_points(polygons):
     """Given a list of polygons, plot the points
 
     Args:
-        polygons (list): list of polygons 
+        polygons (list[list]): list of polygons 
     """
     colors = plt.cm.rainbow(np.linspace(0, 1, len(polygons)))
     
@@ -46,8 +46,8 @@ def compute_slope(v1, v2):
     """Given two points, return the slope. 
 
     Args:
-        v1 (int): coordinates of the first point
-        v2 (int): coordinates of the second point
+        v1 (tuple): coordinates of the first point
+        v2 (tuple): coordinates of the second point
 
     Returns:
         float: slope between the two points
@@ -62,7 +62,7 @@ def compute_mean_slope(polygons):
     """Given a list of polygons of the same size, return the mean slope for each segment.
 
     Args:
-        polygons (list): list of polygons
+        polygons (list[tuple]): list of polygons
 
     Returns:
         np.array: array of means slope
@@ -84,11 +84,11 @@ def euclidean_distance(v1, v2):
     """Given two points, return the euclidean distance between them.
 
     Args:
-        v1 (_type_): _description_
-        v2 (_type_): _description_
+        v1 (tuple): coordinates of the first point
+        v2 (tuple): coordinates of the second point
 
     Returns:
-        _type_: _description_
+        float: euclidean distance between the two points.
     """
     x1, y1 = v1
     x2, y2 = v2
@@ -100,7 +100,7 @@ def compute_mean_distance(polygons):
     """Given a list of polygons of the same size, return the mean euclidean distance for each segment.
 
     Args:
-        polygons (list): list of polygons
+        polygons (list[list]): list of polygons
 
     Returns:
         np.array: array of means slope
@@ -134,7 +134,7 @@ def find_start_point_pos(polygons):
     """Given a list of polygons return the mean position of the starting point
 
     Args:
-        polygons (list): list of polygons 
+        polygons (list[list]): list of polygons 
     """
     num_polygons = len(polygons)
     mean_x = 0
@@ -150,7 +150,7 @@ def mean_polygons(polygons):
     """Given a list of polygons return a new polygon that is the mean of all the polygons given.
 
     Args:
-        polygons (list): list of polygons
+        polygons (list[list]): list of polygons
 
     Returns:
         list: coordinates of the new polygon 
@@ -170,7 +170,7 @@ def fill_polygons(polygons, thresold=1):
     """Given a list of polygons and a thresold, return the polygons filled with points on the outline
 
     Args:
-        polygons (list): list of polygons
+        polygons (list[list]): list of polygons
         thresold (int, optional): thresold for the minimal distance between 2 points. Defaults to 1.
 
     Returns:
@@ -200,7 +200,7 @@ def find_corner(polygons):
     """Given a list of polygons, return the for points that frames the polygon
 
     Args:
-        polygons (list): list of polygons
+        polygons (list[list]): list of polygons
 
     Returns:
         list: list of the coordinates that frames the polygons
@@ -221,3 +221,22 @@ def find_corner(polygons):
         corners.append([(x_max, y_max), (x_max, y_min), (x_min, y_max), (x_min, y_min)]) 
     
     return corners
+
+
+def compute_iou(polygon1, polygon2):
+    """Given two polygons, return the intersection over union area.
+
+    Args:
+        polygon1 (list[tuples]): list of polygon coordinates
+        polygon2 (list[tuples]): list of polygon coordinates
+
+    Returns:
+        float: intersection over union area
+    """
+    poly1 = shapely.geometry.Polygon(polygon1)
+    poly2 = shapely.geometry.Polygon(polygon2)
+    
+    intersection = poly1.intersection(poly2).area
+    union = poly1.union(poly2).area
+    
+    return intersection / union
