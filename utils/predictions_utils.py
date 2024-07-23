@@ -7,7 +7,14 @@ from detectron2.utils.visualizer import ColorMode
 
 
 
-def visualize_predictions(image_path):
+def visualize_predictions(image_path, model_weights, threshold=None):
+    """Given a path to an image, a path to model weights plot the segmentation prediction on the image.
+
+    Args:
+        image_path (str): PATH/TO/IMAGE
+        model_weights (str): PATH/TO/WEIGHTS
+        threshold (float, optional): Value of thresold between 0 and 1. Defaults to None.
+    """
     DATA_SET_NAME = "bloc_segmentation"
     ARCHITECTURE = "mask_rcnn_R_101_FPN_3x"
     CONFIG_FILE_PATH = f"COCO-InstanceSegmentation/{ARCHITECTURE}.yaml"
@@ -15,8 +22,9 @@ def visualize_predictions(image_path):
     cfg = get_cfg()
     cfg.merge_from_file(model_zoo.get_config_file(CONFIG_FILE_PATH))
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1
-    cfg.MODEL.WEIGHTS = "training/bloc_segmentation/mask_rcnn_R_101_FPN_3x/2024-07-03-11-36-15/model_0005999.pth"
-    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.3
+    cfg.MODEL.WEIGHTS = model_weights
+    if threshold:
+        cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = threshold
     predictor = DefaultPredictor(cfg)
     
     image = plt.imread(image_path)

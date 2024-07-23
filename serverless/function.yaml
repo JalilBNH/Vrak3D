@@ -1,0 +1,58 @@
+metadata:
+  name: maskrcnn
+  namespace: cvat
+  annotations:
+    name: Mask R-CNN
+    type: segmenter
+    spec: |
+      [
+        { "id": 1, "name": "bloc", "type": "polygon" }
+      ]
+
+spec:
+  description: Mask R-CNN from Detectron2 for stone block segmentation
+  runtime: 'python:3.8'
+  handler: main:handler
+  eventTimeout: 30s
+
+  build:
+    image: cvat.pth.facebookresearch.detectron2.retinanet_r101
+    baseImage: ubuntu:20.04
+
+    directives:
+      preCopy:
+        - kind: ENV
+          value: DEBIAN_FRONTEND=noninteractive
+        - kind: RUN
+          value: apt-get update && apt-get -y install curl git python3 python3-pip
+        - kind: RUN
+          value: pip3 install opencv-python-headless
+        - kind: WORKDIR
+          value: /opt/nuclio
+        - kind: RUN
+          value: pip3 install torch==1.8.1+cpu torchvision==0.9.1+cpu torchaudio==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html
+        - kind: RUN
+          value: pip3 install 'git+https://github.com/facebookresearch/detectron2@ff53992b1985'
+        - kind: RUN
+          value: pip3 install gdown
+        - kind: RUN
+          value: mkdir -p /opt/nuclio/model/
+        - kind: RUN
+          value: gdown --id 1JyQS-vMWpPMisbHR_3BLyns8DT7TDX_K --output /opt/nuclio/model/model_final.pth
+        - kind: RUN
+          value: ln -s /usr/bin/pip3 /usr/local/bin/pip && ln -s /usr/bin/python3 /usr/bin/python
+
+  triggers:
+    myHttpTrigger:
+      maxWorkers: 2
+      kind: 'http'
+      workerAvailabilityTimeoutMilliseconds: 10000
+      attributes:
+        maxRequestBodySize: 33554432 # 32MB
+
+  platform:
+    attributes:
+      restartPolicy:
+        name: always
+        maximumRetryCount: 3
+      mountMode: volume
