@@ -1,44 +1,44 @@
-import json
-import torch
-from detectron2.engine import DefaultPredictor
 from detectron2.config import get_cfg
+from detectron2.data.detection_utils import read_image
+from detectron2.engine.defaults import DefaultPredictor
+from detectron2.data.datasets.builtin_meta import COCO_CATEGORIES
 from detectron2 import model_zoo
-from detectron2.data import MetadataCatalog
-from detectron2.utils.visualizer import Visualizer
-import cv2
-import numpy as np
-from PIL import Image
-import io
-import base64
 
-# Configure model
-cfg = get_cfg()
-cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml"))
-cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set threshold for this model
-cfg.MODEL.WEIGHTS = "/opt/nuclio/model_final.pth"  # path to the copied model
-predictor = DefaultPredictor(cfg)
+ARCHITECTURE = "mask_rcnn_R_101_FPN_3x"
+CONFIG_FILE_PATH = f"COCO-InstanceSegmentation/{ARCHITECTURE}.yaml"
+WEIGHTS = r'C:\Users\Jalil\Desktop\PROJECTS\Vrak3D\training\bloc_segmentation\mask_rcnn_R_101_FPN_3x\2024-07-19-13-02-30\model_final.pth'
+THRESOLD = 0.5
+
+
+def setup_cfg():
+    cfg = get_cfg()
+    cfg.merge_from_file(model_zoo.get_config_file(CONFIG_FILE_PATH))
+    cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1
+    cfg.MODEL.WEIGHTS = WEIGHTS
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = THRESOLD
+    cfg.freeze()
+    return cfg
+
+def main():
+    cfg = setup_cfg()
+    input = r'C:\Users\Jalil\Desktop\PROJECTS\Vrak3D\training\datasets\0COMPLET\complet\images\20220210_glanum_a_000108.JPG'
+    img = read_image(input)
+    predictor = DefaultPredictor(cfg)
+    predictions = predictor(img)
+    instances = predictions['instances']
+    pred_boxes = instances.pred_boxes
+    scores = instances.scores
+    pred_classes = instances.pred_classes
+    pred_masks = instances.pred_masks
+    for box, score, label in zip(pred_boxes, scores, pred_classes):
+        #print(box.tolist(), float(score), int(label))
+        pass
+
+
+if __name__ == "__main__":
+    main()
+
+
 
 def handler(context, event):
-    try:
-        # Decode image
-        img = Image.open(io.BytesIO(event.body))
-        img = np.array(img)
-
-        # Make prediction
-        outputs = predictor(img)
-
-        # Create masks
-        v = Visualizer(img[:, :, ::-1], MetadataCatalog.get(cfg.DATASETS.TRAIN[0]), scale=1.2)
-        out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-
-        # Encode result
-        result_img = Image.fromarray(out.get_image()[:, :, ::-1])
-        buffered = io.BytesIO()
-        result_img.save(buffered, format="JPEG")
-        img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
-
-        return context.Response(body=json.dumps({"segmentation": img_str}), headers={},
-                                content_type='application/json', status_code=200)
-    except Exception as e:
-        return context.Response(body=json.dumps({"error": str(e)}), headers={},
-                                content_type='application/json', status_code=500)
+    print('hello world les brozer')

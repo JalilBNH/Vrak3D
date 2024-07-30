@@ -1,12 +1,50 @@
-from utils import visualize_points, fill_polygons, find_corner, compute_iou
+from utils import visualize_points, fill_polygons, find_corner, compute_iou, visualize_predictions
 import os
 from PIL import Image
 from pycocotools.coco import COCO
 import numpy as np
 from matplotlib import pyplot as plt
+import time
 
 def main():
 
+    
+    ARCHITECTURE = 'mask_rcnn_R_101_FPN_3x'
+    image_dir = r'C:\Users\Jalil\Desktop\PROJECTS\Vrak3D\training\datasets\test\images'
+    weights_dir = r'C:\Users\Jalil\Desktop\PROJECTS\Vrak3D\training\bloc_segmentation'
+    out_dir = r'C:\Users\Jalil\Desktop\PROJECTS\Vrak3D\training\datasets\test\segmented_images'
+    thresold_values = [0, 25, 50, 75]
+    
+    for f in os.listdir(os.path.join(weights_dir, ARCHITECTURE)):
+        out_path = os.path.join(out_dir, f)
+        weights = os.path.join(weights_dir, f'{ARCHITECTURE}', f, 'model_final.pth')
+        if os.path.exists(weights):
+            for thresold in thresold_values:
+                os.makedirs(os.path.join(out_path, str(thresold)), exist_ok=True)
+                for image in os.listdir(image_dir):
+                    out = visualize_predictions(os.path.join(image_dir, image), weights, thresold/100)
+                    plt.imsave(os.path.join(out_path, str(thresold), image), out)
+            
+    
+    """ for f in os.listdir(test_set_path):
+        plt.imshow(visualize_predictions(os.path.join(test_set_path, f), model_weights))
+        plt.show()
+        break """
+        
+if __name__ == '__main__':
+    main()
+    
+
+
+
+
+
+
+    #polygons = [[(0,0), (2,3), (4,0)], [(6,0), (8,3), (10,0)], [(0,10), (52,4), (19,0), (4, 4)]]    
+    #polygons_filled = fill_polygons(polygons) 
+    
+    
+    
     """ annotation_path = 'training/datasets/0COMPLET/complet/annotations/instances_default.json'
     images_path = 'training/datasets/0COMPLET/complet/images'
     
@@ -44,20 +82,3 @@ def main():
     """ plt.imshow(plt.imread(os.path.join(images_path, image['file_name']))), plt.axis('off'), plt.title(f'ind : {ind}')
     plt.show() """
     
-    json_path = 'training/datasets/0COMPLET/complet/annotations/instances_default.json'
-    imgs_path = 'training/datasets/0COMPLET/complet/images'
-    coco = COCO(json_path)
-    print(coco)
-    
-        
-if __name__ == '__main__':
-    main()
-    
-
-
-
-
-
-
-    #polygons = [[(0,0), (2,3), (4,0)], [(6,0), (8,3), (10,0)], [(0,10), (52,4), (19,0), (4, 4)]]    
-    #polygons_filled = fill_polygons(polygons) 

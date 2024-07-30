@@ -39,5 +39,4 @@ def visualize_predictions(image_path, model_weights, threshold=None):
     )
     
     out = v.draw_instance_predictions(outputs['instances'].to('cpu'))
-    plt.imshow(out.get_image()), plt.axis('off'), plt.title(f'{image_path}')
-    plt.show()
+    return out.get_image()
