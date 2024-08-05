@@ -1,44 +1,60 @@
-from detectron2.config import get_cfg
-from detectron2.data.detection_utils import read_image
+import json
+import base64
+import io
+from PIL import Image
+
+import torch
+from detectron2.model_zoo import get_config
+from detectron2.data.detection_utils import convert_PIL_to_numpy
 from detectron2.engine.defaults import DefaultPredictor
 from detectron2.data.datasets.builtin_meta import COCO_CATEGORIES
-from detectron2 import model_zoo
 
-ARCHITECTURE = "mask_rcnn_R_101_FPN_3x"
-CONFIG_FILE_PATH = f"COCO-InstanceSegmentation/{ARCHITECTURE}.yaml"
-WEIGHTS = r'C:\Users\Jalil\Desktop\PROJECTS\Vrak3D\training\bloc_segmentation\mask_rcnn_R_101_FPN_3x\2024-07-19-13-02-30\model_final.pth'
-THRESOLD = 0.5
+CONFIG_OPTS = ["MODEL.WEIGHTS", 'model_final.pth']
+CONFIDENCE_THRESOLD = 0.5
+CLASSES = {0: 'bloc'}
 
-
-def setup_cfg():
-    cfg = get_cfg()
-    cfg.merge_from_file(model_zoo.get_config_file(CONFIG_FILE_PATH))
+def init_context(context):
+    context.logger.info('Init context... 0%')
+    
+    CONFIG_OPTS.extend(['MODEL.DEVICE', 'cpu'])
+    
+    ARCHITECTURE = "mask_rcnn_R_101_FPN_3x"
+    CONFIG_FILE_PATH = f"COCO-InstanceSegmentation/{ARCHITECTURE}.yaml"
+    cfg = get_config(CONFIG_FILE_PATH)
+    
+    cfg.merge_from_list(CONFIG_OPTS)
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1
-    cfg.MODEL.WEIGHTS = WEIGHTS
-    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = THRESOLD
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = CONFIDENCE_THRESOLD
     cfg.freeze()
-    return cfg
+    predictor = DefaultPredictor(cfg)    
+    
+    context.user_data.moodel_handler = predictor
+    
+    context.logger.info('Init context...100%')
+    
 
-def main():
-    cfg = setup_cfg()
-    input = r'C:\Users\Jalil\Desktop\PROJECTS\Vrak3D\training\datasets\0COMPLET\complet\images\20220210_glanum_a_000108.JPG'
-    img = read_image(input)
-    predictor = DefaultPredictor(cfg)
-    predictions = predictor(img)
+def handler(context, event):
+    context.logger.info('Run mask_rcnn_R101 model')
+    data = event.body()
+    buf = io.BytesIO(base64.b64decode(data['image']))
+    thresold = float(data.get('thresold', 0.5))
+    image = convert_PIL_to_numpy(Image.open(buf), format='BGR')
+    
+    predictions = context.user_data.model_handler(image)
+    
     instances = predictions['instances']
     pred_boxes = instances.pred_boxes
     scores = instances.scores
     pred_classes = instances.pred_classes
-    pred_masks = instances.pred_masks
+    results = []
     for box, score, label in zip(pred_boxes, scores, pred_classes):
-        #print(box.tolist(), float(score), int(label))
-        pass
-
-
-if __name__ == "__main__":
-    main()
-
-
-
-def handler(context, event):
-    print('hello world les brozer')
+        label = CLASSES[int(label)]
+        if score >= thresold:
+            results.append({
+                'confidence': str(float(score)),
+                'label': label,
+                'points': box.tolist(),
+                'type': 'polygon'
+            })
+    
+    return context.Response(body=json.dumps(results), headers={}, content_type='application/json', status_code=200)
