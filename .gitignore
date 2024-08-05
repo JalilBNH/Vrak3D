@@ -3,6 +3,5 @@
 /.svn
 /detectron2
 /server_aws
-/model
 /rapports
 test_model.ipynb
