@@ -26,12 +26,13 @@ def visualize_polygons(polygons):
     ax.set_ylim(0, 10)
     plt.show()
 
+    
 
 def visualize_points(polygons):
     """Given a list of polygons, plot the points
 
     Args:
-        polygons (list[list]): list of polygons 
+        polygons (list[list]): list of list of tuple size 2
     """
     colors = plt.cm.rainbow(np.linspace(0, 1, len(polygons)))
     

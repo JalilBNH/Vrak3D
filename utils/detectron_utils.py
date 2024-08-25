@@ -3,8 +3,15 @@ from matplotlib import pyplot as plt
 from detectron2.utils.visualizer import Visualizer
 import random
 
-def visualizeMask(dataset, metadata, ind=0, rand=True):
-    
+def visualizeMask(dataset, metadata, ind=0, rand=False):
+    """Visualize segmentations mask with detectron2
+
+    Args:
+        dataset 
+        metadata : Optionnal
+        ind (int, optional): Image indice. Defaults to 0.
+        rand (bool, optional): Random image from the dataset. Defaults to True.
+    """
     if rand==True:
         ind = random.randint(0,len(dataset)-1)
     
