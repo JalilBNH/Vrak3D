@@ -1,6 +1,7 @@
 import Metashape
 import math
-
+from matplotlib import pyplot as plt
+import numpy as np
 
 class Project:
     def __init__(self, project_path) -> None:
@@ -8,8 +9,14 @@ class Project:
         self.doc.open(project_path)
         self.chunk = self.doc.chunk
         self.cameras_labels = []
+        self.positions = []
+        self.rotations = []
         for i, camera in enumerate(self.chunk.cameras):
             self.cameras_labels.append(camera.label)
+            self.positions.append((int(camera.center[0]*100), int(camera.center[1]*100), int(camera.center[2]*100)))
+            if camera.transform:
+                self.rotations.append(camera.transform.rotation())
+        self.rotations = np.array(self.rotations) 
         
     def print_camera_labels(self):
         for i, camera in enumerate(self.chunk.cameras):
@@ -57,3 +64,29 @@ class Project:
         angle_deg = math.degrees(angle_rad)
         
         print(f"L'angle entre la caméra {ind1} et la caméra {ind2} est de {angle_deg} degrés.")
+
+    def visualize_cameras_3D(self):
+        """Given a list of polygons, plot all the points
+
+        Args:
+            polygons (list[list]): list of list of tuple size 3
+        """
+        fig = plt.figure()
+        ax = fig.add_subplot(projection='3d')
+        
+        x_coords = [] 
+        y_coords = [] 
+        z_coords = []
+        for cord in self.positions:
+            x_coords.append(cord[0]) 
+            y_coords.append(cord[1])
+            z_coords.append(cord[2])
+        
+        ax.scatter(x_coords, y_coords, z_coords)
+        
+    
+
+        
+# Ajuster l'échelle et les labels
+        
+        plt.show()
