@@ -1,5 +1,5 @@
 # Utils folder 
-I created these functions to manipulate project object like polygons or predictions.
+I created these functions to manipulate project objects like polygons or predictions.
 
 ## All the files
 
