@@ -1,22 +1,22 @@
 metadata:
-  name: custom-mask-rcnn
+  name: mask-rcnn-detectron2-sample
   namespace: cvat
   annotations:
-    name: Mask R-CNN
-    type: segmenter
+    name: Mask R-CNN Sample
+    type: detector
     spec: |
       [
-        { "id":1, "name": "bloc" }
+        { "id": 1, "name": "bloc"}
       ]
 
 spec:
   description: Mask R-CNN from Detectron2
-  runtime: 'python:3.11'
+  runtime: 'python:3.9'
   handler: main:handler
   eventTimeout: 30s
 
   build:
-    image: cvat.pth.facebookresearch.detectron2.mask_rcnn
+    image: cvat.pth.facebookresearch.detectron2.mask_r_cnn_sample
     baseImage: ubuntu:20.04
 
     directives:
@@ -28,11 +28,13 @@ spec:
         - kind: WORKDIR
           value: /opt/nuclio
         - kind: RUN
-          value: pip3 install torch torchvision torchaudio gdown
+          value: pip3 install torch==1.8.1+cpu torchvision==0.9.1+cpu torchaudio==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html
         - kind: RUN
-          value: gdown --id 1JyQS-vMWpPMisbHR_3BLyns8DT7TDX_K --output model_final.pth
+          value: pip3 install opencv-python-headless
         - kind: RUN
           value: pip3 install 'git+https://github.com/facebookresearch/detectron2@ff53992b1985'
+        - kind: RUN
+          value: curl -L -O https://github.com/JalilBNH/Vrak3D/raw/main/model/model_final.pth
         - kind: RUN
           value: ln -s /usr/bin/pip3 /usr/local/bin/pip && ln -s /usr/bin/python3 /usr/bin/python
 
@@ -40,9 +42,9 @@ spec:
     myHttpTrigger:
       maxWorkers: 2
       kind: 'http'
-      workerAvailabilityTimeoutMilliseconds: 10000
+      workerAvailabilityTimeoutMilliseconds: 180000
       attributes:
-        maxRequestBodySize: 33554432 # 32MB
+        maxRequestBodySize: 104857600 # 100MB
 
   platform:
     attributes:
