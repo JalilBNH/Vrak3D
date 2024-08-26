@@ -181,17 +181,14 @@ def fill_polygons(polygons, thresold=1):
     for poly in polygons:
         new_poly = []
         for i in range(len(poly)):
-            #print(f'i : {i}, i + 1 : {(i+1)%len(poly)}')
             dist = euclidean_distance(poly[i], poly[(i+1)%len(poly)])
             
             if dist > thresold:
                 num_points = int(dist // thresold)
                 x_vals = np.linspace(poly[i][0], poly[(i+1)%len(poly)][0], num_points + 2)
                 y_vals = np.linspace(poly[i][1], poly[(i+1)%len(poly)][1], num_points + 2)
-                #print('c laaaa ', list(zip(x_vals, y_vals)))
                 for j in range(len(x_vals)):
                     new_poly.append((x_vals[j], y_vals[j]))
-                #new_poly.append(zip(x_vals, y_vals)) 
         new_polys.append(new_poly)
         
     return new_polys
@@ -209,7 +206,6 @@ def find_corner(polygons):
     
     corners = deepcopy(polygons)
     for poly in polygons:
-        #print(f"poly : {poly}")
         x_array = np.zeros(len(poly), dtype='float')
         y_array = np.zeros(len(poly))
         for i, coord in enumerate(poly):
